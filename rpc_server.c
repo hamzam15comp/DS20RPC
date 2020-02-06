@@ -5,15 +5,16 @@
  */
 
 #include "rpc.h"
-
+#include<time.h>
 struct Tserv *
 rpc_1_svc(void *argp, struct svc_req *rqstp)
 {
 	static struct Tserv  result;
 
-	/*
-	 * insert server code here
-	 */
-
+	struct timespec t_server;
+        clock_gettime(CLOCK_REALTIME, &t_server);
+	//write(0, "Server boi active\n", 19);
+	result.nsec = t_server.tv_nsec;
+	result.sec = t_server.tv_sec;
 	return &result;
 }
