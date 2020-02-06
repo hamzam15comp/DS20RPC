@@ -3,7 +3,8 @@
  * These are only templates and you can use them
  * as a guideline for developing your own functions.
  */
-
+#define _POSIX_C_SOURCE 200809L
+#include<stdio.h>
 #include "add.h"
 #include <time.h>
 
@@ -36,6 +37,7 @@ add_prog_1(char *host)
 
 int
 main (int argc, char *argv[]){
+	struct timespec start, stop, result;
 	char *host;
 	if (argc < 2) {
 		printf ("usage: %s server_host\n", argv[0]);
@@ -44,13 +46,18 @@ main (int argc, char *argv[]){
 	FILE *fp;
 	fp = fopen("rpc_localhost.txt", "a+");
 	host = argv[1];
-	clock_t t; 
-    	t = clock(); 
-	add_prog_1 (host);
-    	t = clock() - t; 
-    	double time_taken = (((double)t)/CLOCKS_PER_SEC)*1000; // in seconds 
-	printf("addrpc() took %f milliseconds to execute \n", time_taken); 
-	fprintf(fp, "%f\n", time_taken);
+	clock_gettime(CLOCK_REALTIME, &start);
+	//add_prog_1 (host);
+	clock_gettime(CLOCK_REALTIME, &stop);
+	if ((stop.tv_nsec - start.tv_nsec) < 0) {
+        	result.tv_sec = stop.tv_sec - start.tv_sec - 1;
+        	result.tv_nsec = stop.tv_nsec - start.tv_nsec + 1000000000;
+    	} else {
+         	result.tv_sec = stop.tv_sec - start.tv_sec;
+        	result.tv_nsec = stop.tv_nsec - start.tv_nsec;
+    	}	
+	printf("addrpc() took %ld . %ld milliseconds to execute \n", result.tv_sec, result.tv_nsec); 
+	fprintf(fp, "%ld . %ld \n", result.tv_sec, result.tv_nsec);
 	fclose(fp);
 	exit (0);
 }

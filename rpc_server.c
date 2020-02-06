@@ -4,13 +4,16 @@
  * as a guideline for developing your own functions.
  */
 
-#include "add.h"
+#include "rpc.h"
 
-int *
-add_1_svc(intpair *argp, struct svc_req *rqstp)
+struct Tserv *
+rpc_1_svc(void *argp, struct svc_req *rqstp)
 {
-	static int result;
-//	write(0, "Server boi active\n", 19);
-	result = argp->a + argp->b;
+	static struct Tserv  result;
+
+	/*
+	 * insert server code here
+	 */
+
 	return &result;
 }
